@@ -366,12 +366,12 @@ summary {
 </div>
 
 
-<p>Before you start, make sure you’ve read the document that describes the zebrafish dataset we’re using in this practical. And make sure you’ve put the required files (deseq2-results.tsv and samples.tsv) in your home directory.</p>
+<p>Before you start, make sure you’ve read the document that describes the zebrafish dataset we’re using in this practical. And make sure you’ve put the required files (<code>deseq2-results.tsv</code> and <code>samples.tsv</code>) in your home directory.</p>
 <p>To begin, here are three exercises that require using the command line in Terminal:</p>
 <ol style="list-style-type: decimal">
-<li><p>Using the awk and wc commands, work out how many genes are significantly differentially expressed (i.e. adjusted p-value &lt; 0.05) for each of the four comparisons in deseq2-results.tsv.</p></li>
-<li><p>Using the cut command, make four separate files, each of which contains just one of the comparisons. So each file will contain Ensembl ID, p-value, adjusted p-value, log2 fold change, chromosome, start, end, strand, biotype, name, description, 24 count columns and 24 normalised count columns. Keep these four files because you’ll need them for later exercises.</p></li>
-<li><p>Filter the four files you have made using awk so that they only contain the significantly differentially expressed genes. Keep these four files as well.</p></li>
+<li><p>Using the <code>awk</code> and <code>wc</code> commands, work out how many genes are significantly differentially expressed (i.e. adjusted p-value &lt; 0.05) for each of the four comparisons in <code>deseq2-results.tsv</code>.</p></li>
+<li><p>Using the <code>cut</code> command, make four separate files, each of which contains just one of the comparisons. So each file will contain Ensembl ID, p-value, adjusted p-value, log2 fold change, chromosome, start, end, strand, biotype, name, description, 24 count columns and 24 normalised count columns. Keep these four files because you’ll need them for later exercises.</p></li>
+<li><p>Filter the four files you have made using <code>awk</code> so that they only contain the significantly differentially expressed genes. Keep these four files as well.</p></li>
 </ol>
 <p>The rest of this practical uses R, so open RStudio and load the tidyverse packages:</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
@@ -462,7 +462,7 @@ top_10_plot &lt;- volcano_plot +
 <div id="extra-exercises" class="section level3">
 <h3>Extra exercises</h3>
 <ol style="list-style-type: decimal">
-<li><p>Try replotting the volcano plot without polr2a. You’ll need to make a data.frame without polr2a in it.</p></li>
+<li><p>Try replotting the volcano plot without polr2a. You’ll need to make a data.frame without polr2a in it using <code>filter</code>.</p></li>
 <li><p>What does the plot look like if you don’t sort the data by adjusted p-value first? Rerun the code to load the data and create the -log10p, sig and up_or_down columns but don’t sort by adjusted p-value.</p></li>
 </ol>
 </div>
