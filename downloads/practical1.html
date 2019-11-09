@@ -519,7 +519,7 @@ counts_for_gene &lt;- pivot_longer(counts_for_gene, -GeneID,
 <pre class="r"><code># set levels of sample variable
 counts_for_gene$sample &lt;- factor(counts_for_gene$sample,
                                  levels = c(unique(counts_for_gene$sample)))</code></pre>
-<p>To see what it looks like now, try <code>head(counts_for_gene)</code>. To see the counts for each individual sample we can plot sample on the x axis and count on the y, like this:</p>
+<p>To see what it looks like now, try <code>head(counts_for_gene)</code>. To see the counts for each individual sample we can plot sample on the x-axis and count on the y, like this:</p>
 <pre class="r"><code>basic_count_plot &lt;- ggplot(data = counts_for_gene) +
   geom_point( aes(x = sample, y = count) ) + 
   theme_minimal() +
@@ -646,7 +646,7 @@ clustered_heatmap &lt;-
   ggplot(data = sig_scaled_clustered_long) + 
     geom_raster( aes(x = sample, y = GeneID, fill = count) ) +
     theme_void()</code></pre>
-<p>Then, if we want, we can add back the x axis labels and rotate them to make them legible. We’ve also changed the colour scheme using the <code>viridis</code> package (<a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis</a>).</p>
+<p>Then, if we want, we can add back the x-axis labels and rotate them to make them legible. We’ve also changed the colour scheme using the <code>viridis</code> package (<a href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">viridis</a>).</p>
 <pre class="r"><code>library(viridis)
 clustered_heatmap &lt;- 
   ggplot(data = sig_scaled_clustered_long) + 

@@ -263,7 +263,7 @@ counts_for_gene$sample <- factor(counts_for_gene$sample,
 ```
 
 To see what it looks like now, try `head(counts_for_gene)`. To see the counts
-for each individual sample we can plot sample on the x axis and count on the y,
+for each individual sample we can plot sample on the x-axis and count on the y,
 like this:
 ```{r basic_count_plot}
 basic_count_plot <- ggplot(data = counts_for_gene) +
@@ -497,7 +497,7 @@ clustered_heatmap <-
 if(plots){print(clustered_heatmap)}
 ```
 
-Then, if we want, we can add back the x axis labels and rotate them to make them
+Then, if we want, we can add back the x-axis labels and rotate them to make them
 legible. We've also changed the colour scheme using the `viridis` package
 ([viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)).
 
