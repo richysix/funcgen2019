@@ -1,13 +1,21 @@
 ---
-title: "Introduction to R and data visualisation with R"
-author: "Richard White"
-date: "30/10/2019"
+title: "Zebrafish Dataset Practical 1"
 output:
   pdf_document: default
   html_document: default
 editor_options:
   chunk_output_type: console
 ---
+
+Before you start, make sure you've read the document that describes the zebrafish dataset we're using in this practical. And make sure you've put the required files (deseq2-results.tsv and samples.tsv) in your home directory.
+
+To begin, here are three exercises that require using the command line in Terminal:
+
+1. Using the awk and wc commands, work out how many genes are significantly differentially expressed (i.e. adjusted p-value < 0.05) for each of the four comparisons in deseq2-results.tsv.
+
+2. Using the cut command, make four separate files, each of which contains just one of the comparisons. So each file will contain Ensembl ID, p-value, adjusted p-value, log2 fold change, chromosome, start, end, strand, biotype, name, description, 24 count columns and 24 normalised count columns. Keep these four files because you'll need them for later exercises.
+
+3. Filter the four files you have made using awk so that they only contain the significantly differentially expressed genes. Keep these four files as well.
 
 ```{r load_libraries, include=FALSE, message=FALSE}
 # load packages
@@ -23,13 +31,13 @@ opts_chunk$set( fig.width=9, fig.height=6, include=TRUE, echo=TRUE,
 plots <- FALSE
 ```
 
-Open RStudio and load the tidyverse packages.
+The rest of this practical uses R, so open RStudio and load the tidyverse packages:
 
-```{r packages, include=FALSE}
+```{r packages, message=FALSE}
 library(tidyverse)
 ```
 
-Read in the DESeq2 results file.
+Read in the DESeq2 results file:
 
 ```{r load_data, message=FALSE}
 # assign the results file name to a variable
@@ -39,11 +47,11 @@ deseq_results_file <- 'deseq2-results.tsv'
 deseq_results <- read_tsv(deseq_results_file)
 ```
 
-# Volcano plot
+## Volcano plot
 
 Prepare the data for making a volcano plot. We need to convert the adjusted 
-pvalues to -log~10~(Adjusted pval). Also, we are going to make a new column that marks 
-whether a gene is significantly different or not and one that shows whether 
+p-values to -log~10~(adjusted p-value). Also, we are going to make a new column that marks
+whether a gene is significantly different or not and another one that shows whether
 the significant genes are up or down.
 
 ```{r data_prep}
@@ -70,8 +78,8 @@ deseq_results <-
 deseq_results <- arrange(deseq_results, desc(uninf_5dpf_hom_vs_sib_adjp))
 ```
 
-The basic volcano plot shows the -log~10~(pvalue) against the log~2~(fold change) 
-for each gene with the genes coloured by whether the gene is up or downregulated
+The basic volcano plot shows the -log~10~(p-value) against the log~2~(fold change)
+for each gene, with the genes coloured by whether the gene is up or down
 or not significant.
 
 ```{r volcano_plot_base}
@@ -120,7 +128,7 @@ object and then progressively adding more to it.
 
 Next we can add labels to some of the points which meet certain criteria.
 For example we can filter the data based on log~2~(fold change)
-and Adjusted pvalue.
+and adjusted p-value.
 
 ```{r log2fc_threshold}
 # data to highlight specific genes
@@ -151,7 +159,7 @@ labelled_plot <- volcano_plot +
 if(plots){print(labelled_plot)}
 ```
 
-Or we could do the top 10 genes by Adjusted pvalue.
+Or we could do just the top 10 genes by adjusted p-value.
 
 ```{r volcano_top10}
 # get the top 10 genes by adjusted pvalue
@@ -170,24 +178,23 @@ top_10_plot <- volcano_plot +
 if(plots){print(top_10_plot)}
 ```
 
-## Extra exercises
+### Extra exercises
 
 1. Try replotting the volcano plot without polr2a. You'll need to make a 
 data.frame without polr2a in it.
 
-2. What does the plot look like if you don't sort the data by Adjusted pvalue
+2. What does the plot look like if you don't sort the data by adjusted p-value
 first? Rerun the code to load the data and create the -log10p, sig and 
-up_or_down columns but don't sort by Adjusted pvalue.
+up_or_down columns but don't sort by adjusted p-value.
 
-# Count Plot
+## Count Plot
 
 To plot the normalised counts for each sample for a gene it helps to have a 
 table of the sample info. This samples file has different properties of the 
 condition (stage, treatment and genotype) in separate columns.
 
-```{r load_sample_info}
-sample_info_file <- file.path('deseq2', 'sample-info.txt')
-sample_info_file <- file.path('deseq2', 'samples.tsv')
+```{r load_sample_info, message=FALSE}
+sample_info_file <- 'samples.tsv'
 sample_info <- read_tsv(sample_info_file)
 # set sample column name
 names(sample_info)[1] <- 'sample'
@@ -256,8 +263,8 @@ counts_for_gene$sample <- factor(counts_for_gene$sample,
 ```
 
 To see what it looks like now, try `head(counts_for_gene)`. To see the counts
-for each individual sample we can plot sample on the x axis and count on the y.
-Like this:
+for each individual sample we can plot sample on the x axis and count on the y,
+like this:
 ```{r basic_count_plot}
 basic_count_plot <- ggplot(data = counts_for_gene) +
   geom_point( aes(x = sample, y = count) ) + 
@@ -301,8 +308,8 @@ sample_count_plot_coloured <- ggplot(data = counts_plus_sample_info_uninf_5dpf) 
 if(plots){print(sample_count_plot_coloured)}
 ```
 
-We could also have the shape of the points represent the actaul genotypes, in 
-case we want to check whether the hets are similar to the wild-types.
+We could also have the shape of the points represent the actual genotypes, in
+case we want to check whether the hets are similar to the wild types.
 
 ```{r sample_count_plot_colour_shape}
 # plot with genotype as shape of points
@@ -395,11 +402,10 @@ What happens if you don't use outlier.shape = NA?
 if(plots){print(boxplot_points_jittered)}
 ```
 
-# Heatmap
+## Heatmap
 
-To plot a heatmap of the significantly differently expressed genes we need to 
-subset the `deseq_results` data frame.
-Like this:
+To plot a heatmap of the significantly differentially expressed genes we need to
+subset the `deseq_results` data frame, like this:
 ```{r tidy_subset}
 sig_results <- filter(deseq_results, uninf_5dpf_hom_vs_sib_sig) %>%
   arrange(uninf_5dpf_hom_vs_sib_adjp)
@@ -475,9 +481,9 @@ clustered_heatmap <-
 if(plots){print(clustered_heatmap)}
 ```
 
-Each gene id appears as a y-axis label and they cannot be read. Also the sample 
+Each gene ID appears as a y-axis label and they cannot be read. Also the sample
 names aren't legible either. We can remove both sets of labels with 
-`theme_void()`. 
+`theme_void()`.
 
 ```{r theme_void_heatmap, message=FALSE}
 clustered_heatmap <- 
@@ -491,11 +497,11 @@ clustered_heatmap <-
 if(plots){print(clustered_heatmap)}
 ```
 
-Then if we want, we can add back the x axis labels and rotate them to make them 
-legible. I've also changed the colour scheme using the `viridis` package
+Then, if we want, we can add back the x axis labels and rotate them to make them
+legible. We've also changed the colour scheme using the `viridis` package
 ([viridis](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)).
 
-```{r viridis_heatmap}
+```{r viridis_heatmap, message=FALSE}
 library(viridis)
 clustered_heatmap <- 
   ggplot(data = sig_scaled_clustered_long) + 
