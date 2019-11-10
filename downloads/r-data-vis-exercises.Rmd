@@ -1,0 +1,128 @@
+---
+title: "Data Visualiation with R Exercises"
+mainfont: Calibri Light
+sansfont: Calibri
+monofont: Courier New
+output:
+  word_document: default
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r load_libraries, include=FALSE, message=FALSE}
+# load packages
+packages <-  c("knitr", "rprojroot")
+for( package in packages ){
+  library( package, character.only = TRUE )
+}
+```
+
+```{r knitr_options, include=FALSE, message=FALSE}
+opts_chunk$set( fig.width=9, fig.height=6, include=FALSE, echo=FALSE, 
+                results = FALSE, warning = FALSE, message = FALSE,
+                fig.show = FALSE, cache = FALSE)
+
+```
+
+Load the example dataset (`example2.tsv`) using `read_tsv`.
+
+```{r tidyverse, include = TRUE, echo = TRUE, eval = FALSE}
+library(tidyverse)
+results <- read_tsv('example2.tsv',
+                    col_types = cols(Chr = 'c', Strand = 'c'))
+```
+
+```{r load_data, include = TRUE, echo = FALSE}
+library(tidyverse)
+results <- read_tsv('r-data-vis/example2.tsv',
+                    col_types = cols(Chr = 'c', Strand = 'c'))
+```
+
+## Filtering and Selecting
+
+1. Use `filter` to find out how many genes have an adjusted p-value less than 0.05.
+
+```{r filtering}
+filter(results, adjp < 0.05) %>%
+  nrow()
+```
+
+2. Find out which gene has the smallest p-value by sorting the data using `arrange`.
+
+```{r arrange}
+arrange(results, adjp) %>%
+  select(., GeneID, Name, adjp) %>%
+  head(1)
+```
+
+3. Make a new column in the data that is -log10 of the adjusted p-value column.
+You can use the `log10()` function to calculate this.
+
+```{r mutate}
+results <- mutate(results, 
+       log10p = -log10(adjp))
+
+select(results, GeneID, Name, adjp, log10p) %>% 
+  arrange(adjp) %>% 
+  head(5)
+```
+
+4. Make a new data.frame that contains the GeneID, Name and all the normalised
+count columns.
+
+```{r select}
+normalised_counts <- 
+  select(results, GeneID, Name, contains('normalised_count'))
+```
+
+5. Make the new data.frame data tidy using `pivot_longer`.
+
+```{r pivot, eval = FALSE}
+normalised_counts_long <- 
+  pivot_longer(normalised_counts, -GeneID, -Name,
+                names_to = 'sample', values_to = 'normalised count')
+```
+
+```{r gather, echo = FALSE}
+normalised_counts_long <- 
+  gather(normalised_counts, -GeneID, -Name,
+          key = 'sample', value = 'normalised count')
+
+```
+
+## Plotting
+
+1. Using the `iris` dataset make a plot of Petal.Width (y) against Sepal.Width (x).
+
+```{r plot1}
+ggplot(data = iris) + 
+  geom_point(aes(x = Sepal.Width, y = Petal.Width))
+```
+
+2. Now colour the points by Petal.Length and use the viridis colour scale 
+using `scale_colour_viridis_c`.
+
+```{r plot2, eval = FALSE}
+ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
+  geom_point(aes(colour = Petal.Length)) +
+  scale_colour_viridis_c()
+```
+
+```{r plot2_actual, echo = FALSE}
+library(viridis)
+ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
+  geom_point(aes(colour = Petal.Length)) +
+  scale_colour_viridis()
+```
+
+3. Change the colouring to Species, choose a hollow shape (one of 21-25) and 
+pick 3 colours to use with `scale_fill_manual`.
+
+```{r plot3}
+ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
+  geom_point(aes(fill = Species), shape = 22, size = 3) +
+  scale_fill_manual(values = c('firebrick2', 'steelblue3', 'orange'))
+```
