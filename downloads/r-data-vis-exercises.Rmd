@@ -1,13 +1,13 @@
 ---
-title: "R intro exercises"
+title: "Data Visualiation with R Exercises"
 mainfont: Calibri Light
 sansfont: Calibri
 monofont: Courier New
 output:
-  html_document: default
   word_document: default
   pdf_document:
     latex_engine: xelatex
+  html_document: default
 editor_options:
   chunk_output_type: console
 ---
@@ -27,7 +27,7 @@ opts_chunk$set( fig.width=9, fig.height=6, include=FALSE, echo=FALSE,
 
 ```
 
-Load the example dataset (deseq2-results.tsv) using `read_tsv`.
+Load the example dataset (`example2.tsv`) using `read_tsv`.
 
 ```{r tidyverse, include = TRUE, echo = TRUE, eval = FALSE}
 library(tidyverse)
