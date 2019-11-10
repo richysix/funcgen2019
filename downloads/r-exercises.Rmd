@@ -1,0 +1,117 @@
+---
+title: "R intro exercises"
+mainfont: Calibri Light
+sansfont: Calibri
+monofont: Courier New
+output:
+  html_document: default
+  word_document: default
+  pdf_document:
+    latex_engine: xelatex
+editor_options:
+  chunk_output_type: console
+---
+
+```{r load_libraries, include=FALSE, message=FALSE}
+# load packages
+packages <-  c("knitr", "rprojroot")
+for( package in packages ){
+  library( package, character.only = TRUE )
+}
+```
+
+```{r knitr_options, include=FALSE, message=FALSE}
+opts_chunk$set( fig.width=9, fig.height=6, include=FALSE, echo=FALSE, 
+                results = FALSE, warning = FALSE, message = FALSE,
+                fig.show = FALSE, cache = FALSE)
+
+```
+
+Load the example dataset (deseq2-results.tsv) using `read_tsv`.
+
+```{r tidyverse}
+library(tidyverse)
+deseq_results <- read_tsv('deseq2-results.tsv')
+```
+
+## Filtering and Selecting
+
+1. Use `filter` to find out how many genes have an adjusted pvalue less than 0.05
+for the uninf_5dpf_hom_vs_sib comparison.
+
+```{r filtering}
+filter(deseq_results, uninf_5dpf_hom_vs_sib_adjp < 0.05) %>%
+  nrow()
+```
+
+2. Find out which gene has the smallest pvalue for the uninf_5dpf_hom_vs_sib 
+comparison by sorting the data using `arrange`.
+
+```{r arrange}
+arrange(deseq_results, uninf_5dpf_hom_vs_sib_adjp) %>%
+  select(., GeneID, Name, uninf_5dpf_hom_vs_sib_adjp) %>%
+  head(1)
+```
+
+3. Make a new column in the data that is -log10 of the uninf_5dpf_hom_vs_sib_adjp
+column. You can use the `log10()` function to calculate this.
+
+```{r mutate}
+deseq_results <- mutate(deseq_results, 
+       uninf_5dpf_hom_vs_sib_log10p = -log10(uninf_5dpf_hom_vs_sib_adjp))
+```
+
+4. Make a new data.frame that contains the GeneID, Name and all the normalised
+count columns for the uninf_5dpf_hom_vs_sib comparison.
+
+```{r select}
+normalised_counts <- 
+  select(deseq_results, GeneID, Name, contains('normalised_count')) %>%
+  select(., GeneID, Name, contains('uninf_5dpf'))
+
+normalised_counts <- 
+  select(deseq_results, GeneID, Name, matches('uninf_5dpf.*normalised_count'))
+```
+
+5. Make the new data.frame data tidy using `pivot_wider`.
+
+```{r pivot, eval = FALSE}
+normalised_counts_long <- 
+  pivot_longer(normalised_counts, -GeneID, -Name,
+                names_to = 'sample', values_to = 'normalised count')
+
+```
+
+## Plotting
+
+1. Using the `iris` dataset make a plot of Petal.Width (y) against Sepal.Width (x).
+
+```{r plot1}
+ggplot(data = iris) + 
+  geom_point(aes(x = Sepal.Width, y = Petal.Width))
+```
+
+2. Now colour the points by Petal.Length and use the viridis colour scale 
+using `scale_colour_viridis_c`.
+
+```{r plot2, eval = FALSE}
+ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
+  geom_point(aes(colour = Petal.Length)) +
+  scale_colour_viridis_c()
+```
+
+```{r plot2_actual, echo = FALSE}
+library(viridis)
+ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
+  geom_point(aes(colour = Petal.Length)) +
+  scale_colour_viridis()
+```
+
+3. Change the colouring to Species, choose a hollow shape (one of 21-25) and 
+pick 3 colours to use with `scale_fill_manual`
+
+```{r plot3}
+ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
+  geom_point(aes(fill = Species), shape = 22, size = 3) +
+  scale_fill_manual(values = c('firebrick2', 'steelblue3', 'orange'))
+```
