@@ -43,14 +43,14 @@ results <- read_tsv('r-data-vis/example2.tsv',
 
 ## Filtering and Selecting
 
-1. Use `filter` to find out how many genes have an adjusted pvalue less than 0.05.
+1. Use `filter` to find out how many genes have an adjusted p-value less than 0.05.
 
 ```{r filtering}
 filter(results, adjp < 0.05) %>%
   nrow()
 ```
 
-2. Find out which gene has the smallest pvalue by sorting the data using `arrange`.
+2. Find out which gene has the smallest p-value by sorting the data using `arrange`.
 
 ```{r arrange}
 arrange(results, adjp) %>%
@@ -58,7 +58,7 @@ arrange(results, adjp) %>%
   head(1)
 ```
 
-3. Make a new column in the data that is -log10 of the adjusted pvalue column. 
+3. Make a new column in the data that is -log10 of the adjusted p-value column.
 You can use the `log10()` function to calculate this.
 
 ```{r mutate}
@@ -119,7 +119,7 @@ ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) +
 ```
 
 3. Change the colouring to Species, choose a hollow shape (one of 21-25) and 
-pick 3 colours to use with `scale_fill_manual`
+pick 3 colours to use with `scale_fill_manual`.
 
 ```{r plot3}
 ggplot(data = iris, aes(x = Sepal.Width, y = Petal.Width)) + 
