@@ -82,13 +82,13 @@ normalised_counts <-
 
 ```{r pivot, eval = FALSE}
 normalised_counts_long <- 
-  pivot_longer(normalised_counts, -GeneID, -Name,
+  pivot_longer(normalised_counts, c(-GeneID, -Name),
                 names_to = 'sample', values_to = 'normalised count')
 ```
 
 ```{r gather, echo = FALSE}
 normalised_counts_long <- 
-  gather(normalised_counts, -GeneID, -Name,
+  gather(normalised_counts, c(-GeneID, -Name),
           key = 'sample', value = 'normalised count')
 
 ```
