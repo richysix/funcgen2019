@@ -401,7 +401,7 @@ select(results, GeneID, Name, adjp, log10p) %&gt;%
 <li>Make the new data.frame data tidy using <code>pivot_longer</code>.</li>
 </ol>
 <pre class="r"><code>normalised_counts_long &lt;- 
-  pivot_longer(normalised_counts, -GeneID, -Name,
+  pivot_longer(normalised_counts, c(-GeneID, -Name),
                 names_to = 'sample', values_to = 'normalised count')</code></pre>
 </div>
 <div id="plotting" class="section level2">
