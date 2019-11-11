@@ -18,9 +18,42 @@ To begin, here are three exercises that require using the command line in Termin
 
 1. Using the `awk` and `wc` commands, work out how many genes are significantly differentially expressed (i.e. adjusted p-value < 0.05) for each of the four comparisons in `deseq2-results.tsv`.
 
+```{r eval=FALSE, echo=FALSE}
+# inf_5dpf_hom_vs_sib
+awk '$3 < 0.05' deseq2-results.tsv | wc -l
+2522
+# uninf_3dpf_hom_vs_sib
+awk '$6 < 0.05' deseq2-results.tsv | wc -l
+262
+# uninf_5dpf_hom_vs_sib
+awk '$9 < 0.05' deseq2-results.tsv | wc -l
+633
+# uninf_7dpf_hom_vs_sib
+awk '$12 < 0.05' deseq2-results.tsv | wc -l
+2459
+```
+
 2. Using the `cut` command, make four separate files, each of which contains just one of the comparisons. So each file will contain Ensembl ID, p-value, adjusted p-value, log2 fold change, chromosome, start, end, strand, biotype, name, description, 24 count columns and 24 normalised count columns. Keep these four files because you'll need them for later exercises.
 
+```{r eval=FALSE, echo=FALSE}
+cut -f1,2-4,14-20,21-44,117-140 deseq2-results.tsv > inf_5dpf_hom_vs_sib.tsv
+cut -f1,5-7,14-20,45-68,141-164 deseq2-results.tsv > uninf_3dpf_hom_vs_sib.tsv
+cut -f1,8-10,14-20,69-92,165-188 deseq2-results.tsv > uninf_5dpf_hom_vs_sib.tsv
+cut -f1,11-13,14-20,93-116,189-212 deseq2-results.tsv > uninf_7dpf_hom_vs_sib.tsv
+```
+
 3. Filter the four files you have made using `awk` so that they only contain the significantly differentially expressed genes. Keep these four files as well.
+
+```{r eval=FALSE, echo=FALSE}
+head -1 inf_5dpf_hom_vs_sib.tsv > inf_5dpf_hom_vs_sib.sig.tsv
+awk '$3 < 0.05' inf_5dpf_hom_vs_sib.tsv >> inf_5dpf_hom_vs_sib.sig.tsv
+head -1 uninf_3dpf_hom_vs_sib.tsv > uninf_3dpf_hom_vs_sib.sig.tsv
+awk '$3 < 0.05' uninf_3dpf_hom_vs_sib.tsv >> uninf_3dpf_hom_vs_sib.sig.tsv
+head -1 uninf_5dpf_hom_vs_sib.tsv > uninf_5dpf_hom_vs_sib.sig.tsv
+awk '$3 < 0.05' uninf_5dpf_hom_vs_sib.tsv >> uninf_5dpf_hom_vs_sib.sig.tsv
+head -1 uninf_7dpf_hom_vs_sib.tsv > uninf_7dpf_hom_vs_sib.sig.tsv
+awk '$3 < 0.05' uninf_7dpf_hom_vs_sib.tsv >> uninf_7dpf_hom_vs_sib.sig.tsv
+```
 
 ```{r load_libraries, include=FALSE, message=FALSE}
 # load packages
