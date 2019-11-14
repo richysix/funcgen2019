@@ -216,6 +216,29 @@ top_10_plot <- volcano_plot +
 if(plots){print(top_10_plot)}
 ```
 
+To label genes on the plot from a list of gene ids, you need to find which rows contain your gene and subset to just those rows.
+
+```{r label_specific_points}
+# start with a vector of gene ids
+geneIds <- c("ENSDARG00000044280", "ENSDARG00000022817",
+             "ENSDARG00000001993", "ENSDARG00000099667",
+             "ENSDARG00000099738", "ENSDARG00000019521")
+# function to test which row number a gene is in
+which.gene <- function(gene_id, column) {
+  which(column == gene_id)
+}
+# this runs the which.gene function on the vector of gene ids
+# so what you get back is a vector of row numbers
+# which can be used to subset the deseq_results object
+row_numbers <- sapply(geneIds, which.gene, deseq_results$GeneID)
+highlight_genes <- deseq_results[ row_numbers, ]
+
+# then you can make a new volcano plot using the highlight_genes
+# object in geom_label_repel
+specific_genes_volcano_plot <- volcano_plot +
+  geom_label_repel(data = highlight_genes, aes(label = Name))
+```
+
 ### Extra exercises
 
 1. Try replotting the volcano plot without polr2a. You'll need to make a 
