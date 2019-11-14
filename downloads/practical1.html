@@ -459,6 +459,25 @@ top_10_genes &lt;-
 top_10_plot &lt;- volcano_plot +
   geom_label_repel(data = top_10_genes, aes(label = Name))
   # add labels using the top10 data.</code></pre>
+<p>To label genes on the plot from a list of gene ids, you need to find which rows contain your gene and subset to just those rows.</p>
+<pre class="r"><code># start with a vector of gene ids
+geneIds &lt;- c(&quot;ENSDARG00000044280&quot;, &quot;ENSDARG00000022817&quot;,
+             &quot;ENSDARG00000001993&quot;, &quot;ENSDARG00000099667&quot;,
+             &quot;ENSDARG00000099738&quot;, &quot;ENSDARG00000019521&quot;)
+# function to test which row number a gene is in
+which.gene &lt;- function(gene_id, column) {
+  which(column == gene_id)
+}
+# this runs the which.gene function on the vector of gene ids
+# so what you get back is a vector of row numbers
+# which can be used to subset the deseq_results object
+row_numbers &lt;- sapply(geneIds, which.gene, deseq_results$GeneID)
+highlight_genes &lt;- deseq_results[ row_numbers, ]
+
+# then you can make a new volcano plot using the highlight_genes
+# object in geom_label_repel
+specific_genes_volcano_plot &lt;- volcano_plot +
+  geom_label_repel(data = highlight_genes, aes(label = Name))</code></pre>
 <div id="extra-exercises" class="section level3">
 <h3>Extra exercises</h3>
 <ol style="list-style-type: decimal">
